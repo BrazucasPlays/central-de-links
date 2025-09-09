@@ -52,7 +52,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      width: 320px;
+      width: 350px;
       margin: 10px auto;
       padding: 10px;
       background: #fff;
@@ -71,14 +71,20 @@
       margin-right: 8px;
       border-radius: 6px;
     }
-    .remove-btn {
-      background: #e74c3c;
+    .btns {
+      display: flex;
+      gap: 6px;
+    }
+    .edit-btn, .remove-btn {
       border: none;
-      color: white;
       padding: 6px 10px;
       border-radius: 6px;
       cursor: pointer;
+      color: #fff;
     }
+    .edit-btn { background: #3498db; }
+    .edit-btn:hover { background: #2980b9; }
+    .remove-btn { background: #e74c3c; }
     .remove-btn:hover { background: #c0392b; }
   </style>
 </head>
@@ -86,17 +92,19 @@
   <header>⚙️ Dashboard</header>
 
   <div id="dashboard">
-    <h2>Adicionar Link</h2>
+    <h2 id="form-title">Adicionar Link</h2>
     <input type="text" id="titulo" placeholder="Título do botão" required>
     <input type="url" id="link" placeholder="URL do link" required>
     <input type="url" id="imagem" placeholder="URL da imagem/ícone" required>
-    <button onclick="adicionarLink()">Adicionar</button>
+    <button onclick="salvarLink()">Salvar</button>
   </div>
 
   <div id="links-preview"></div>
 
   <script>
-    function adicionarLink() {
+    let editIndex = null; // se for null, estamos adicionando. Se não, estamos editando.
+
+    function salvarLink() {
       const titulo = document.getElementById("titulo").value;
       const link = document.getElementById("link").value;
       const imagem = document.getElementById("imagem").value;
@@ -107,13 +115,37 @@
       }
 
       let links = JSON.parse(localStorage.getItem("links")) || [];
-      links.push({titulo, link, imagem});
-      localStorage.setItem("links", JSON.stringify(links));
 
+      if (editIndex === null) {
+        // adiciona
+        links.push({titulo, link, imagem});
+      } else {
+        // edita
+        links[editIndex] = {titulo, link, imagem};
+        editIndex = null;
+        document.getElementById("form-title").innerText = "Adicionar Link";
+      }
+
+      localStorage.setItem("links", JSON.stringify(links));
       renderLinks();
+      limparCampos();
+    }
+
+    function limparCampos() {
       document.getElementById("titulo").value = "";
       document.getElementById("link").value = "";
       document.getElementById("imagem").value = "";
+    }
+
+    function editarLink(index) {
+      let links = JSON.parse(localStorage.getItem("links")) || [];
+      const item = links[index];
+      document.getElementById("titulo").value = item.titulo;
+      document.getElementById("link").value = item.link;
+      document.getElementById("imagem").value = item.imagem;
+
+      editIndex = index;
+      document.getElementById("form-title").innerText = "Editar Link";
     }
 
     function removerLink(index) {
@@ -132,7 +164,10 @@
         div.className = "item";
         div.innerHTML = `
           <span><img src="${item.imagem}" alt=""> ${item.titulo}</span>
-          <button class="remove-btn" onclick="removerLink(${index})">❌</button>
+          <div class="btns">
+            <button class="edit-btn" onclick="editarLink(${index})">✏️</button>
+            <button class="remove-btn" onclick="removerLink(${index})">❌</button>
+          </div>
         `;
         container.appendChild(div);
       });
