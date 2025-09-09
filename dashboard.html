@@ -48,22 +48,38 @@
     #links-preview {
       margin-top: 20px;
     }
-    .btn {
+    .item {
       display: flex;
       align-items: center;
-      justify-content: center;
-      width: 280px;
+      justify-content: space-between;
+      width: 320px;
       margin: 10px auto;
-      padding: 12px;
+      padding: 10px;
       background: #fff;
       border: 2px solid #ddd;
-      border-radius: 12px;
-      text-decoration: none;
-      color: #333;
-      font-size: 18px;
+      border-radius: 10px;
+    }
+    .item span {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
       font-weight: bold;
     }
-    .btn img { width: 40px; height: 40px; margin-right: 10px; border-radius: 6px; }
+    .item img {
+      width: 30px;
+      height: 30px;
+      margin-right: 8px;
+      border-radius: 6px;
+    }
+    .remove-btn {
+      background: #e74c3c;
+      border: none;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .remove-btn:hover { background: #c0392b; }
   </style>
 </head>
 <body>
@@ -100,17 +116,25 @@
       document.getElementById("imagem").value = "";
     }
 
+    function removerLink(index) {
+      let links = JSON.parse(localStorage.getItem("links")) || [];
+      links.splice(index, 1);
+      localStorage.setItem("links", JSON.stringify(links));
+      renderLinks();
+    }
+
     function renderLinks() {
       const container = document.getElementById("links-preview");
       container.innerHTML = "";
       let links = JSON.parse(localStorage.getItem("links")) || [];
-      links.forEach(item => {
-        const a = document.createElement("a");
-        a.href = item.link;
-        a.target = "_blank";
-        a.className = "btn";
-        a.innerHTML = `<img src="${item.imagem}" alt=""> ${item.titulo}`;
-        container.appendChild(a);
+      links.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <span><img src="${item.imagem}" alt=""> ${item.titulo}</span>
+          <button class="remove-btn" onclick="removerLink(${index})">❌</button>
+        `;
+        container.appendChild(div);
       });
     }
 
