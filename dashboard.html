@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard - Gerenciar Links</title>
+  <title>Dashboard - Gerenciar Site</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -18,69 +18,62 @@
       font-size: 22px;
       font-weight: bold;
     }
-    #dashboard {
-      max-width: 400px;
+    .card {
+      max-width: 500px;
       margin: 20px auto;
       padding: 20px;
       background: #fff;
       border-radius: 10px;
       box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
     }
-    #dashboard input {
+    input {
       width: 100%;
       margin: 5px 0;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 6px;
     }
-    #dashboard button {
+    button {
       margin-top: 10px;
-      width: 100%;
-      padding: 12px;
+      padding: 10px 15px;
       border: none;
       background: #4CAF50;
       color: #fff;
-      font-size: 16px;
-      border-radius: 8px;
+      font-size: 15px;
+      border-radius: 6px;
       cursor: pointer;
     }
-    #dashboard button:hover { background: #45a049; }
-    #links-preview {
-      margin-top: 20px;
-    }
+    button:hover { background: #45a049; }
     .item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      width: 350px;
-      margin: 10px auto;
+      margin: 8px 0;
       padding: 10px;
-      background: #fff;
-      border: 2px solid #ddd;
-      border-radius: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fafafa;
     }
     .item span {
       display: flex;
       align-items: center;
-      font-size: 16px;
-      font-weight: bold;
     }
     .item img {
-      width: 30px;
-      height: 30px;
+      width: 25px;
+      height: 25px;
       margin-right: 8px;
-      border-radius: 6px;
+      border-radius: 4px;
     }
     .btns {
       display: flex;
       gap: 6px;
     }
     .edit-btn, .remove-btn {
-      border: none;
       padding: 6px 10px;
+      border: none;
       border-radius: 6px;
       cursor: pointer;
-      color: #fff;
+      color: white;
     }
     .edit-btn { background: #3498db; }
     .edit-btn:hover { background: #2980b9; }
@@ -89,25 +82,49 @@
   </style>
 </head>
 <body>
-  <header>⚙️ Dashboard</header>
+  <header>⚙️ Dashboard de Administração</header>
 
-  <div id="dashboard">
-    <h2 id="form-title">Adicionar Link</h2>
-    <input type="text" id="titulo" placeholder="Título do botão" required>
-    <input type="url" id="link" placeholder="URL do link" required>
-    <input type="url" id="imagem" placeholder="URL da imagem/ícone" required>
-    <button onclick="salvarLink()">Salvar</button>
+  <div class="card">
+    <h2>Configurar Cabeçalho</h2>
+    <input type="url" id="logo" placeholder="URL da Logo">
+    <input type="text" id="titulo" placeholder="Título / Nome da marca">
+    <input type="text" id="desc" placeholder="Descrição / Frase de impacto">
+    <button onclick="salvarHeader()">Salvar Cabeçalho</button>
   </div>
 
-  <div id="links-preview"></div>
+  <div class="card">
+    <h2 id="form-title">Adicionar Link</h2>
+    <input type="text" id="btnTitulo" placeholder="Título do botão">
+    <input type="url" id="btnLink" placeholder="URL do link">
+    <input type="url" id="btnImagem" placeholder="URL da imagem/ícone">
+    <button onclick="salvarLink()">Salvar Link</button>
+  </div>
+
+  <div class="card">
+    <h2>Pré-visualização dos Links</h2>
+    <div id="links-preview"></div>
+  </div>
 
   <script>
-    let editIndex = null; // se for null, estamos adicionando. Se não, estamos editando.
+    let editIndex = null;
 
+    // Salvar cabeçalho
+    function salvarHeader() {
+      const logo = document.getElementById("logo").value;
+      const title = document.getElementById("titulo").value;
+      const desc = document.getElementById("desc").value;
+
+      const headerData = {logo, title, desc};
+      localStorage.setItem("siteHeader", JSON.stringify(headerData));
+
+      alert("Cabeçalho salvo com sucesso!");
+    }
+
+    // Salvar link
     function salvarLink() {
-      const titulo = document.getElementById("titulo").value;
-      const link = document.getElementById("link").value;
-      const imagem = document.getElementById("imagem").value;
+      const titulo = document.getElementById("btnTitulo").value;
+      const link = document.getElementById("btnLink").value;
+      const imagem = document.getElementById("btnImagem").value;
 
       if (!titulo || !link || !imagem) {
         alert("Preencha todos os campos!");
@@ -117,10 +134,8 @@
       let links = JSON.parse(localStorage.getItem("links")) || [];
 
       if (editIndex === null) {
-        // adiciona
         links.push({titulo, link, imagem});
       } else {
-        // edita
         links[editIndex] = {titulo, link, imagem};
         editIndex = null;
         document.getElementById("form-title").innerText = "Adicionar Link";
@@ -132,17 +147,17 @@
     }
 
     function limparCampos() {
-      document.getElementById("titulo").value = "";
-      document.getElementById("link").value = "";
-      document.getElementById("imagem").value = "";
+      document.getElementById("btnTitulo").value = "";
+      document.getElementById("btnLink").value = "";
+      document.getElementById("btnImagem").value = "";
     }
 
     function editarLink(index) {
       let links = JSON.parse(localStorage.getItem("links")) || [];
       const item = links[index];
-      document.getElementById("titulo").value = item.titulo;
-      document.getElementById("link").value = item.link;
-      document.getElementById("imagem").value = item.imagem;
+      document.getElementById("btnTitulo").value = item.titulo;
+      document.getElementById("btnLink").value = item.link;
+      document.getElementById("btnImagem").value = item.imagem;
 
       editIndex = index;
       document.getElementById("form-title").innerText = "Editar Link";
@@ -173,7 +188,17 @@
       });
     }
 
-    window.onload = renderLinks;
+    window.onload = () => {
+      renderLinks();
+
+      // Carregar cabeçalho salvo
+      const headerData = JSON.parse(localStorage.getItem("siteHeader"));
+      if (headerData) {
+        document.getElementById("logo").value = headerData.logo;
+        document.getElementById("titulo").value = headerData.title;
+        document.getElementById("desc").value = headerData.desc;
+      }
+    }
   </script>
 </body>
 </html>
