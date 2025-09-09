@@ -2,24 +2,28 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Central de Links - Teste</title>
+  <title>Meus Links</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      background: #f9f9f9;
       margin: 0;
-      padding: 20px;
-    }
-    h1 {
+      padding: 0;
       text-align: center;
-      margin-bottom: 20px;
     }
-    /* Estilo dos botões de link */
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
     .btn {
       display: flex;
       align-items: center;
+      justify-content: center;
       width: 280px;
-      margin: 10px auto;
+      margin: 15px auto;
       padding: 12px;
       background: #fff;
       border: 2px solid #ddd;
@@ -32,83 +36,28 @@
     }
     .btn:hover { background: #f0f0f0; border-color: #aaa; }
     .btn img { width: 40px; height: 40px; margin-right: 10px; border-radius: 6px; }
-
-    /* Formulário (Dashboard simples) */
-    #dashboard {
-      max-width: 400px;
-      margin: 20px auto;
-      padding: 15px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
-    }
-    #dashboard h2 {
-      margin-bottom: 10px;
-      font-size: 20px;
-      text-align: center;
-    }
-    #dashboard input {
-      width: 100%;
-      margin: 5px 0;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    #dashboard button {
-      margin-top: 10px;
-      width: 100%;
-      padding: 12px;
-      border: none;
-      background: #4CAF50;
-      color: #fff;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    #dashboard button:hover {
-      background: #45a049;
-    }
   </style>
 </head>
 <body>
-  <h1>Central de Links</h1>
+  <header>🌐 Meus Links</header>
 
-  <!-- Dashboard para adicionar links -->
-  <div id="dashboard">
-    <h2>Adicionar Link</h2>
-    <input type="text" id="titulo" placeholder="Título do botão" required>
-    <input type="url" id="link" placeholder="URL do link" required>
-    <input type="url" id="imagem" placeholder="URL da imagem/ícone" required>
-    <button onclick="adicionarLink()">Adicionar</button>
-  </div>
-
-  <!-- Onde os botões aparecerão -->
   <div id="links"></div>
 
   <script>
-    function adicionarLink() {
-      const titulo = document.getElementById("titulo").value;
-      const link = document.getElementById("link").value;
-      const imagem = document.getElementById("imagem").value;
-
-      if (!titulo || !link || !imagem) {
-        alert("Preencha todos os campos!");
-        return;
-      }
-
+    function renderLinks() {
       const container = document.getElementById("links");
-      const a = document.createElement("a");
-      a.href = link;
-      a.target = "_blank";
-      a.className = "btn";
-      a.innerHTML = `<img src="${imagem}" alt=""> ${titulo}`;
-      container.appendChild(a);
-
-      // Limpar os campos
-      document.getElementById("titulo").value = "";
-      document.getElementById("link").value = "";
-      document.getElementById("imagem").value = "";
+      container.innerHTML = "";
+      let links = JSON.parse(localStorage.getItem("links")) || [];
+      links.forEach(item => {
+        const a = document.createElement("a");
+        a.href = item.link;
+        a.target = "_blank";
+        a.className = "btn";
+        a.innerHTML = `<img src="${item.imagem}" alt=""> ${item.titulo}`;
+        container.appendChild(a);
+      });
     }
+    window.onload = renderLinks;
   </script>
 </body>
 </html>
