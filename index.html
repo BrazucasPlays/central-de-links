@@ -75,9 +75,9 @@
 </head>
 <body>
   <header>
-    <img src="https://via.placeholder.com/120" alt="Logo">
-    <h1>Minha Marca</h1>
-    <p>Sua frase de impacto ou descrição aqui ✨</p>
+    <img id="site-logo" src="https://via.placeholder.com/120" alt="Logo">
+    <h1 id="site-title">Minha Marca</h1>
+    <p id="site-desc">Sua frase de impacto ou descrição aqui ✨</p>
   </header>
 
   <div class="container" id="links-container">
@@ -89,7 +89,19 @@
   </footer>
 
   <script>
-    function carregarLinks() {
+    function carregarSite() {
+      // Cabeçalho
+      const headerData = JSON.parse(localStorage.getItem("siteHeader")) || {
+        logo: "https://via.placeholder.com/120",
+        title: "Minha Marca",
+        desc: "Sua frase de impacto ou descrição aqui ✨"
+      };
+
+      document.getElementById("site-logo").src = headerData.logo;
+      document.getElementById("site-title").innerText = headerData.title;
+      document.getElementById("site-desc").innerText = headerData.desc;
+
+      // Links
       const container = document.getElementById("links-container");
       container.innerHTML = "";
       let links = JSON.parse(localStorage.getItem("links")) || [];
@@ -109,7 +121,7 @@
       });
     }
 
-    window.onload = carregarLinks;
+    window.onload = carregarSite;
   </script>
 </body>
 </html>
